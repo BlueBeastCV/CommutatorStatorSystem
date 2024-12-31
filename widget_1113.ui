@@ -2148,6 +2148,13 @@ QRadioButton::indicator:unchecked:disabled
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="test">
+                 <property name="text">
+                  <string>测试</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="clearAxialPoint">
                  <property name="minimumSize">
                   <size>
@@ -6430,7 +6437,7 @@ font: 25 12pt &quot;Microsoft YaHei&quot;;
   <customwidget>
    <class>TitleWidget</class>
    <extends>QWidget</extends>
-   <header>titlewidget.h</header>
+   <header location="global">titlewidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

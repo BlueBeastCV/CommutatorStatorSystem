@@ -7,10 +7,10 @@ myDashBoard::myDashBoard(QWidget *parent) : QWidget(parent)
 
     m_startAngle = 60; //起始角度
     m_endAngle = 60; //终止角度
-    m_scaleMajor = 10; //大刻度
-    m_minValue = 0;   //最小值
-    m_maxValue = 20;  //最大值
-    m_scaleMinor = 5; //小刻度
+    m_scaleMajor = 5; //大刻度
+    m_minValue = -10;   //最小值
+    m_maxValue = 15;  //最大值
+    m_scaleMinor = 10; //小刻度
     m_units = ""; //单位
     m_title = ""; //标题
     m_precision = 4; //精度

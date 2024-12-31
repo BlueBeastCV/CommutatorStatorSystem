@@ -92,5 +92,6 @@
         <file>images/login.png</file>
         <file>images/极坐标折线图.png</file>
         <file>images/调试.png</file>
+        <file>images/AECC.ico</file>
     </qresource>
 </RCC>

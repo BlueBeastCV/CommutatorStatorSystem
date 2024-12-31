@@ -33,7 +33,6 @@
 #include <QPrintPreviewDialog>
 #include <QPrinter>
 #include <QPrintDialog>
-#include "chartview.h"
 
 typedef radialPolarChart myRadialPolarChart;
 typedef axialpolarChart myAxialPolarChart;
@@ -176,7 +175,6 @@ private:
     bool enabled = false;
     bool isUpping = false;
     bool isDowning = false;
-
     std::shared_ptr<qtStreamBuf> buffer;
     //初始化自定义表盘
     myDashBoard *dashboard1;
@@ -259,7 +257,6 @@ private:
     QTimer *testTimer;
     QVector<double> xData;
     int currentIndex;
-
 
 };
 

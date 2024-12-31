@@ -153,7 +153,7 @@ QComboBox::drop-down:on{
 top:1px;
 }</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1,0">
+  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -229,24 +229,12 @@ top:1px;
       <number>9</number>
      </property>
      <item>
-      <widget class="QLabel" name="log">
-       <property name="minimumSize">
-        <size>
-         <width>380</width>
-         <height>0</height>
-        </size>
-       </property>
+      <widget class="QLabel" name="label_6">
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="images.qrc">:/img/images/log.ico</pixmap>
-       </property>
-       <property name="scaledContents">
-        <bool>true</bool>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <pixmap resource="images.qrc">:/img/images/AECC.ico</pixmap>
        </property>
       </widget>
      </item>
@@ -510,7 +498,7 @@ top:1px;
          </font>
         </property>
         <property name="text">
-         <string>技术支持：成都迪迈沃克光电科技有限公司</string>
+         <string/>
         </property>
        </widget>
       </item>

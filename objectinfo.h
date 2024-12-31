@@ -120,6 +120,7 @@ public:
     int unitNum;
     double maxValue,maxAngle,minValue,minAngle,beatValue,beatAngle,verticalValue,verticalAngle;
     double concentricity,concentriticAngle,eccentricity,eccentricAngle,flatness,roundness;
+    QVector<QPointF> axialPolarPoints;
 
 };
 
@@ -143,6 +144,7 @@ public:
     int unitNum;
     double maxValue,maxAngle,minValue,minAngle,beatValue,beatAngle,verticalValue,verticalAngle;
     double concentricity,concentriticAngle,eccentricity,eccentricAngle,flatness,roundness;
+    QVector<QPointF> radialPolarPoints;
 
 };
 
@@ -247,7 +249,8 @@ public:
         axisOnePosition = 0.0;// 轴1当前位置
         axisTwoPosition = 0.0; // 轴2当前位置
         axisThreePosition = 0.0; // 轴3当前位置
-        turnTableAngel    = 0.0; // 气浮转台实时角度
+        turnTableAngle    = 0.0; // 气浮转台实时角度
+        lastStableAngle = 0.0;
         compressionStatus = false; //压紧状态
         loosingStatus = false; //松开状态
         turnTableLocationFinish = false; //气浮转台定位完成
@@ -258,13 +261,17 @@ public:
         warningStatus = false; //报警状态
         axisHeightRange = 0.0; //AKD升降轴高度范围
         turnTableActionFeedBack = false;
+        turnTableWarning = false;
+        turnTableEmergency = false;
+        turnTableControlAxisWarning = false;
 
     }
 public:
     float axisOnePosition;
     float axisTwoPosition;
     float axisThreePosition;
-    float turnTableAngel;
+    float turnTableAngle;
+    float lastStableAngle;
     bool compressionStatus;
     bool loosingStatus;
     bool turnTableLocationFinish;
@@ -275,6 +282,11 @@ public:
     bool warningStatus;
     float axisHeightRange;
     bool turnTableActionFeedBack;
+    bool turnTableWarning; // baojing
+    bool turnTableEmergency; //gaojing
+    bool turnTableControlAxisWarning;
+
+
 };
 
 

@@ -13,6 +13,7 @@ LimitForm::LimitForm(QWidget *parent) :
     ui->titleWidget->setShowMaxBtn(false);
     ui->titleWidget->setShowMinBtn(false);
 
+
 }
 
 LimitForm::~LimitForm()

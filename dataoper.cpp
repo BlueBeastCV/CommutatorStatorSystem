@@ -372,11 +372,11 @@ int DataOper::getTypeNumByTime(QStringList &typeNumList, QString startTime, QStr
 //    }
 //}
 int DataOper::getSensorNumberOneData(QVector<SensorDetectDataOne> &sensorNumOneDataList, const QString typeNum,
-                                     const QString &startTime, const QString &endTime)
+                                     const QString &startTime, const QString &endTime, int queryNum)
 {
     QSqlQuery q(db);
-    QString sql = QString("select samplePoints, angle, detectData, dates from sensorOneDetectTable where typeNum = '%1' AND dates BETWEEN '%2' AND '%3'")
-            .arg(typeNum).arg(startTime + "00:00:00").arg(endTime + "23:59:59");
+    QString sql = QString("select samplePoints, angle, detectData from sensorOneDetectTable where typeNum = '%1' AND dates BETWEEN '%2' AND '%3' limit '%4'")
+            .arg(typeNum).arg(startTime + "00:00:00").arg(endTime + "23:59:59").arg(queryNum);
     if(q.exec(sql))
     {
         while(q.next())
@@ -385,7 +385,6 @@ int DataOper::getSensorNumberOneData(QVector<SensorDetectDataOne> &sensorNumOneD
             datas.pointsNum = q.value("samplePoints").toInt();
             datas.angle = q.value("angle").toDouble();
             datas.detectData = q.value("detectData").toDouble();
-            datas.date = q.value("dates").toString();
             sensorNumOneDataList.push_back(datas);
         }
         return 0;
@@ -399,11 +398,11 @@ int DataOper::getSensorNumberOneData(QVector<SensorDetectDataOne> &sensorNumOneD
 
 
 int DataOper::getSensorNumberTwoData(QVector<SensorDetectDataTwo> &sensorNumTwoDataList, const QString typeNum,
-                                     const QString &startTime, const QString &endTime)
+                                     const QString &startTime, const QString &endTime, int queryNum)
 {
     QSqlQuery q(db);
-    QString sql = QString("select samplePoints, angle, detectData, dates from sensorTwoDetectTable where typeNum = '%1' AND dates BETWEEN '%2' AND '%3'")
-            .arg(typeNum).arg(startTime + "00:00:00").arg(endTime + "23:59:59");
+    QString sql = QString("select samplePoints, angle, detectData from sensorTwoDetectTable where typeNum = '%1' AND dates BETWEEN '%2' AND '%3' limit '%4'")
+            .arg(typeNum).arg(startTime + "00:00:00").arg(endTime + "23:59:59").arg(queryNum);
     if(q.exec(sql))
     {
         while(q.next())
@@ -412,7 +411,6 @@ int DataOper::getSensorNumberTwoData(QVector<SensorDetectDataTwo> &sensorNumTwoD
             datas.pointsNum = q.value("samplePoints").toInt();
             datas.angle = q.value("angle").toDouble();
             datas.detectData = q.value("detectData").toDouble();
-            datas.date = q.value("dates").toString();
             sensorNumTwoDataList.push_back(datas);
         }
         return 0;

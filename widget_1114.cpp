@@ -2001,7 +2001,7 @@ void Widget::readControllerObject()
         }
 
         // 设置UI显示的角度
-        ui->angle->setValue(angle);
+        ui->angle->setValue(ceil(angle));
 
     }
     //轴存在未上使能报警
@@ -2356,6 +2356,7 @@ bool Widget::isTechnician()
         return false;
     }
 }
+
 //初始化1号马尔表实时曲线
 void Widget::initRadialChart()
 {

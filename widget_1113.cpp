@@ -23,7 +23,7 @@ Widget::Widget(User u, QWidget *parent):
     initAxialChart();
 
     //生成1024个X轴数据点
-    //    xData = generateRandomData(ui->Edit_smaplingPoints_3->text().toInt());
+    xData = generateRandomData(ui->Edit_smaplingPoints_3->text().toInt());
     //马尔表连接
     initTimer.singleShot(100,this,[this](){
         initMahrDevices();
@@ -101,59 +101,79 @@ void Widget::init()
     //定时添加数据到统计图
     radialReadDataTimer = new QTimer();
     connect(radialReadDataTimer,&QTimer::timeout,this,[=](){
+//        if(mahrDataOne < 0)
+//        {
+//            radialYAxis->setRange(ceil(mahrDataOne), 0);
+//        }else {
+//            radialYAxis->setRange(ceil(mahrDataOne)-1, ceil(mahrDataOne));
+//        }
         radialYAxis->setRange(ceil(mahrDataOne)-1, ceil(mahrDataOne));
         addPointToRadialChart(mahrDataOne,fabs(ui->angle->value()));
         saveMahrDataToTableOne(fabs(ui->angle->value()),mahrDataOne); //fabs(fmod(oneConObject.turnTableAngel,360))
     });
     axialReadDataTimer = new QTimer();
     connect(axialReadDataTimer,&QTimer::timeout,this,[=](){
+//        if (mahrDataTwo < 0) {
+//            axialYAxis->setRange(ceil(mahrDataOne), 0);
+//        } else {
+//            axialYAxis->setRange(0, ceil(mahrDataTwo));
+//        }
         axialYAxis->setRange(ceil(mahrDataTwo)-1, ceil(mahrDataTwo));
         addPointToAxialChart(mahrDataTwo,fabs(ui->angle->value()));
         saveMahrDataToTableTwo(fabs(ui->angle->value()),mahrDataTwo);
     });
     //====================测试====================
-    //    testTimer = new QTimer();
-    //    connect(testTimer,&QTimer::timeout,this,[=](){
-    //        if (currentIndex >= xData.size()) {
-    //            testTimer->stop();
-    //            getSensorOneMaxAngle();
-    //            getSensorOneMaxValue();
-    //            getSensorOneMinAngle();
-    //            getSensorOneMinValue();
+    testTimer = new QTimer();
+    connect(testTimer,&QTimer::timeout,this,[=](){
+        if (currentIndex >= xData.size()) {
+            testTimer->stop();
+            getSensorOneMaxAngle();
+            getSensorOneMaxValue();
+            getSensorOneMinAngle();
+            getSensorOneMinValue();
 
-    //            getRadialBeatValue();
-    //            getRadialBeatAngle();
-    //            getRadialEccentricValue();
-    //            getRadialEccentricAngle();
+            getRadialBeatValue();
+            getRadialBeatAngle();
+            getRadialEccentricValue();
+            getRadialEccentricAngle();
 
-    //            getSensorTwoMaxAngle();
-    //            getSensorTwoMaxValue();
-    //            getSensorTwoMinAngle();
-    //            getSensorTwoMinValue();
-    //            getAxialEccentricValue();
-    //            getAxialEccentricAngle();
-    //            getAxialBeatValue();
-    //            getAxialBeatAngle();
-    //            radialEvaluate(ui->sensorOneMaxValue->value(),ui->sensorOneMaxAngle->value(),ui->sensorOneMinValue->value(),ui->sensorOneMinAngle->value());
-    //            axialEvaluate(ui->sensorTwoMaxValue->value(),ui->sensorTwoMaxAngle->value(),ui->sensorTwoMinValue->value(),ui->sensorTwoMinAngle->value());
-    //            qDebug() << xData.size();
-    //            qDebug() << xData;
-    //            return;
-    //        }
-    //        radialYAxis->setRange(ceil(mahrDataOne)-1, ceil(mahrDataOne));
-    //        axialYAxis->setRange(ceil(mahrDataTwo)-1, ceil(mahrDataTwo));
-    //        double x = xData[currentIndex];
-    //        radialSeries->append(x,mahrDataOne);
-    //        axialSeries->append(x, mahrDataTwo);
+            getSensorTwoMaxAngle();
+            getSensorTwoMaxValue();
+            getSensorTwoMinAngle();
+            getSensorTwoMinValue();
+            getAxialEccentricValue();
+            getAxialEccentricAngle();
+            getAxialBeatValue();
+            getAxialBeatAngle();
+            radialEvaluate(ui->sensorOneMaxValue->value(),ui->sensorOneMaxAngle->value(),ui->sensorOneMinValue->value(),ui->sensorOneMinAngle->value());
+            axialEvaluate(ui->sensorTwoMaxValue->value(),ui->sensorTwoMaxAngle->value(),ui->sensorTwoMinValue->value(),ui->sensorTwoMinAngle->value());
+            qDebug() << xData.size();
+            qDebug() << xData;
+            return;
+        }
+        if(mahrDataOne < 0)
+        {
+            radialYAxis->setRange(-1, 0);
+        }else {
+            radialYAxis->setRange(0, ceil(mahrDataOne));
+        }
+        if (mahrDataTwo < 0) {
+            axialYAxis->setRange(-1, 0);
+        } else {
+            axialYAxis->setRange(0, ceil(mahrDataTwo));
+        }
+        double x = xData[currentIndex];
+        radialSeries->append(x,mahrDataOne);
+        axialSeries->append(x, mahrDataTwo);
 
-    //        currentIndex++;
-    //    });
-    //    connect(ui->test,&QPushButton::clicked,this,[=](){
-    //        currentIndex = 0; // 重置currentIndex
-    //        radialSeries->clear(); // 清空之前的点
-    //        axialSeries->clear(); // 清空之前的点
-    //        testTimer->start(50);
-    //    });
+        currentIndex++;
+    });
+    connect(ui->test,&QPushButton::clicked,this,[=](){
+        currentIndex = 0; // 重置currentIndex
+        radialSeries->clear(); // 清空之前的点
+        axialSeries->clear(); // 清空之前的点
+        testTimer->start(100);
+    });
 }
 //初始化PLC线程函数
 void Widget::InitPLCThread()
@@ -228,21 +248,18 @@ void Widget::initMode()
     snap7_plc->DBWrite(writeDbNum,66,2,&modeBuffer,"初始化运行模式！");
 }
 
-//QVector<double> Widget::generateRandomData(int count)
-//{
-//    QVector<double> data(count);
-//    for (int i = 0; i < count; ++i) {
-//        data[i] = (i / static_cast<double>(count - 1)) * (radialMaxX - radialMinX) + radialMinX;
-//    }
-//    return data;
-//}
+QVector<double> Widget::generateRandomData(int count)
+{
+    QVector<double> data(count);
+    for (int i = 0; i < count; ++i) {
+        data[i] = (i / static_cast<double>(count - 1)) * (radialMaxX - radialMinX) + radialMinX;
+    }
+    return data;
+}
 //初始化马尔表1号
 void Widget::initDeviceOne()
 {
     deviceOneStatus = m_mwlManager->openDevice(deviceOne);
-
-//    initStartDataCallBackDeviceOne();
-
     ui->sensorOneStatus->setStyleSheet(deviceOneStatus == true ? normal_radius : fail_radius);
     qlog(QString("Open Deivce One %1 !!!").arg(deviceOneStatus == true ? "Succeed" : "Failed"));
 }
@@ -250,9 +267,6 @@ void Widget::initDeviceOne()
 void Widget::initDeviceTwo()
 {
     deviceTwoStatus = m_mwlManager->openDevice(deviceTwo);
-
-//    initStartDataCallBackDeviceTwo();
-
     ui->sensorTwoStatus->setStyleSheet(deviceTwoStatus == true ? normal_radius : fail_radius);
     qlog(QString("Open Deivce Two %1 !!!").arg(deviceTwoStatus == true ? "Succeed" : "Failed"));
 }
@@ -287,7 +301,6 @@ void Widget::closeDeviceTwo()
 //信息打印回调函数
 int __stdcall Widget::message_callback_handler(int Msg, int DeviceId, int Param)
 {
-
     if (Msg == WM_MWL_Tick)
     {
         qlog("WM_MWL_Tick");
@@ -492,18 +505,17 @@ void Widget::initConnect()
             ui->openSensorOneData->setText("关闭");
             ui->openSensorOneData->setStyleSheet(pushButtonGreenStyle);
             initStartDataCallBackDeviceOne();
-            m_mwlManager->startContinuousRequestAllData(58,0);
-            //            deviceOneGetDataTimer->start(1000);
+            m_mwlManager->startContinuousRequestAllData(50,0);
+//            deviceOneGetDataTimer->start(1000);
 
         } else {
             // 停止获取数据
             isDeviceOneDataGetted = false;
             ui->openSensorOneData->setText("开始");
             ui->openSensorOneData->setStyleSheet(hoverPushButtonStyle);
-            m_mwlManager->unregisterDataCallback((F_MwlDataCallback)data_callback_handler_1);
             m_mwlManager->stopContinuousRequestAllData();
-            //            m_mwlManager->stopContinuousRequestAllData();
-            //            deviceOneGetDataTimer->stop();
+//            m_mwlManager->stopContinuousRequestAllData();
+//            deviceOneGetDataTimer->stop();
         }
     });
     //采集马尔表数据------2#
@@ -520,17 +532,15 @@ void Widget::initConnect()
             ui->openSensorTwoData->setText("关闭");
             ui->openSensorTwoData->setStyleSheet(pushButtonGreenStyle);
             initStartDataCallBackDeviceTwo();
-            m_mwlManager->startContinuousRequestAllData(58,0);
-            //            deviceTwoGetDataTimer->start(1000);
+            m_mwlManager->startContinuousRequestAllData(50,0);
+//            deviceTwoGetDataTimer->start(1000);
         } else {
             // 停止获取数据
             isDeviceTwoDataGetted = false;
             ui->openSensorTwoData->setText("开始");
             ui->openSensorTwoData->setStyleSheet(hoverPushButtonStyle);
-            m_mwlManager->unregisterDataCallback((F_MwlDataCallback)data_callback_handler_2);
             m_mwlManager->stopContinuousRequestAllData();
-
-            //            deviceTwoGetDataTimer->stop();
+//            deviceTwoGetDataTimer->stop();
         }
     });
     //测量结束日期修改事件
@@ -1167,7 +1177,6 @@ void Widget::initConnect()
         }
         if(myHelper::ShowMessageBoxQuesion("是否要停止气浮转台主轴？") == QDialog::Accepted)
         {
-            isMeasuringStatus = false;
             snap7_plc->sendBitToRobot(2, 2, true, writeDbNum,"气浮转台主轴停止信号发送！");
             radialReadDataTimer->stop();
             axialReadDataTimer->stop();
@@ -1325,9 +1334,8 @@ void Widget::initConnect()
             //发送转台转动信号
             snap7_plc->sendBitToRobot(68,4,true, writeDbNum,"发送转台转动信号！");
             myHelper::pushButtonStyleChange("正在转动",ui->turnTableRun,false,false);
-            radialReadDataTimer->start(58);
-            axialReadDataTimer->start(58);
-            isMeasuringStatus = true;
+            radialReadDataTimer->start(30);
+            axialReadDataTimer->start(30);
             //100ms后发送转台转动置为false
             QTimer::singleShot(100,[this](){
                 snap7_plc->sendBitToRobot(68,4,false, writeDbNum,"发送转台转动信号清空！");
@@ -1615,114 +1623,17 @@ void Widget::initConnect()
     });
     //生成径向评定极坐标图
     connect(ui->createRadialPolar,&QPushButton::clicked,this,[=](){
-//        radialPolar->show();
-//        radialPolar->polarSeries->clear();
-//        radialPolar->scatter->clear();
-////        radialPolar->polarChart->axisY()->setRange(ceil(ui->sensorOneMinValue->value()),ceil(ui->sensorOneMaxValue->value()));
-//        RadialDataEvaluate datas;
-//        datas.radialPolarPoints = radialSeries->pointsVector();
-//        if(datas.radialPolarPoints.isEmpty())
-//        {
-//            myHelper::ShowMessageBoxError("点数为0，无法生成极坐标图！");
-//            return;
-//        }
-//        int interval = ui->printPoint->currentText().toInt();//份数
-//        int total = ui->Edit_smaplingPoints_3->text().toInt();
-//        int oneLength = total / interval;//单个长度 128  10  1020
-
-//        QList<QPointF> allData;// datas.radialPolarPoints
-////        for (int i = 0; i < total; ++i) {
-////            double angle = i * (360.0 / total);
-////            double radius = 12.0 + (qSin(angle * M_PI / 180.0) * 5.0); // 模拟半径变化
-////            allData.append(QPointF(angle, radius));
-////        }
-//        for(const QPointF &point : datas.radialPolarPoints)
-//        {
-//            allData.append(point);
-//        }
-//        QList<QPointF> sonData;// 需要着重显示的点
-//        for(int i = 1; i <= interval; i++){
-//            sonData.append(allData[oneLength * i - 1]);
-//        }
-//        radialPolar->polarSeries->append(allData);
-////        for (int i = 0; i <= 360; i += 10){
-////            double angle = i * (360.0 / 360.0);
-////            radialPolar->polarSeries->append(angle, 12.0);
-////        }
-//        //        QList<QPointF> pos;
-//        //        pos.append(QPointF(60,12));
-//        //        pos.append(QPointF(120,12));
-//        //        pos.append(QPointF(150,12));
-
-//        //        radialPolar->polarChartView->FlagPosList = pos;
-//        QHash<QPointF, ChartView::PointType> flagPosList;
-//        flagPosList[QPointF(ui->sensorOneMaxAngle->value(), ui->sensorOneMaxValue->value())] = ChartView::HighPoint; // 高点
-//        flagPosList[QPointF(ui->sensorOneMinAngle->value(), ui->sensorOneMinValue->value())] = ChartView::LowPoint; // 低点
-//        flagPosList[QPointF(ui->sensorOneBiasAngle->value() + 0.05, ui->sensorOneBiasValue->value())] = ChartView::Tilt; // 倾斜
-//        flagPosList[QPointF(ui->sensorOneBiasAngle->value(), ui->sensorOneBiasValue->value())] = ChartView::Eccentric; // 偏心
-//        //        // 将 sonData 中的最后一个点标记为数据分布点
-//        //        if (!sonData.isEmpty()) {
-//        //            QPointF lastPoint = sonData.last();
-//        //            flagPosList[lastPoint] = ChartView::DataDistribution; // 数据分布点
-//        //        }
-//        //        // 将 sonData 中的点及其对应的类型绑定到 flagPosList
-//        //        for (const QPointF &point : sonData) {
-//        //            if (!flagPosList.contains(point)) {
-//        //                flagPosList[point] = ChartView::DataDistribution; // 默认为数据分布点
-//        //            }
-//        //        }
-//        // 将 sonData 中的每个最后一个点添加到 QScatterSeries
-//        for (const QPointF &point : sonData) {
-//            radialPolar->scatter->append(point);
-//        }
-////        radialPolar->polarChartView->chart()->addSeries(radialSeries);
-//        radialPolar->polarChartView->setFlagPosList(flagPosList);
-//        radialPolar->polarChartView->showLabels();
-//        radialPolar->polarChartView->update();
-//        radialPolar->isCreated = true;
         radialPolar->show();
         radialPolar->polarSeries->clear();
-        radialPolar->scatter->clear();
-
+        radialPolar->polarChart->axisY()->setRange(ceil(ui->sensorOneMinValue->value()),ceil(ui->sensorOneMaxValue->value()));
         RadialDataEvaluate datas;
         datas.radialPolarPoints = radialSeries->pointsVector();
-        if (datas.radialPolarPoints.isEmpty()) {
-            myHelper::ShowMessageBoxError("点数为0，无法生成极坐标图！");
-            return;
-        }
-
-        int interval = ui->printPoint->currentText().toInt(); // 份数
-        int total = ui->Edit_smaplingPoints_3->text().toInt();
-        int oneLength = total / interval; // 单个长度 128  10  1020
-
-        QList<QPointF> allData; // datas.radialPolarPoints
+        qDebug() << "datas.radialPolarPoints.size(): " <<  datas.radialPolarPoints.size();
+        // 遍历数组并将点添加到系列中
         for (const QPointF &point : datas.radialPolarPoints) {
-            allData.append(point);
+            radialPolar->polarSeries->append(point);
+
         }
-
-        QList<QPointF> sonData; // 需要着重显示的点
-        for (int i = 1; i <= interval; i++) {
-            sonData.append(allData[oneLength * i - 1]);
-        }
-
-        radialPolar->polarSeries->append(allData);
-
-        QHash<QPointF, ChartView::PointType> flagPosList;
-        flagPosList[QPointF(ui->sensorOneMaxAngle->value(), ui->sensorOneMaxValue->value())] = ChartView::HighPoint; // 高点
-        flagPosList[QPointF(ui->sensorOneMinAngle->value(), ui->sensorOneMinValue->value())] = ChartView::LowPoint; // 低点
-        flagPosList[QPointF(ui->sensorOneBiasAngle->value() + 0.05, ui->sensorOneBiasValue->value())] = ChartView::Tilt; // 倾斜
-        flagPosList[QPointF(ui->sensorOneBiasAngle->value(), ui->sensorOneBiasValue->value())] = ChartView::Eccentric; // 偏心
-
-        for (const QPointF &point : sonData) {
-            radialPolar->scatter->append(point);
-        }
-
-        // 显式添加系列
-        radialPolar->polarChartView->chart()->addSeries(radialPolar->polarSeries);
-        radialPolar->polarChartView->chart()->addSeries(radialPolar->scatter);
-
-        radialPolar->polarChartView->setFlagPosList(flagPosList);
-        radialPolar->polarChartView->showLabels();
         radialPolar->polarChartView->update();
         radialPolar->isCreated = true;
 
@@ -1731,47 +1642,15 @@ void Widget::initConnect()
     connect(ui->createAxialPolar,&QPushButton::clicked,this,[=](){
         axialPolar->show();
         axialPolar->polarSeries->clear();
-        axialPolar->scatter->clear();
-
+        axialPolar->polarChart->axisY()->setRange(ceil(ui->sensorTwoMinValue->value()),ceil(ui->sensorTwoMaxValue->value()));
         AxialDataEvaluate datas;
         datas.axialPolarPoints = axialSeries->pointsVector();
-        if (datas.axialPolarPoints.isEmpty()) {
-            myHelper::ShowMessageBoxError("点数为0，无法生成极坐标图！");
-            return;
+        qDebug() << "datas.axialPolarPoints.size(): " <<  datas.axialPolarPoints.size();
+        // 遍历数组并将点添加到系列中
+        for (const QPointF &point :  datas.axialPolarPoints) {
+            axialPolar->polarSeries->append(point);
+
         }
-
-        int interval = ui->printPoint->currentText().toInt(); // 份数
-        int total = ui->Edit_smaplingPoints_3->text().toInt();
-        int oneLength = total / interval; // 单个长度 128  10  1020
-
-        QList<QPointF> allData; // datas.axialPolarPoints
-        for (const QPointF &point : datas.axialPolarPoints) {
-            allData.append(point);
-        }
-
-        QList<QPointF> sonData; // 需要着重显示的点
-        for (int i = 1; i <= interval; i++) {
-            sonData.append(allData[oneLength * i - 1]);
-        }
-
-        axialPolar->polarSeries->append(allData);
-
-        QHash<QPointF, ChartView::PointType> flagPosList;
-        flagPosList[QPointF(ui->sensorTwoMaxAngle->value(), ui->sensorTwoMaxValue->value())] = ChartView::HighPoint; // 高点
-        flagPosList[QPointF(ui->sensorTwoMinAngle->value(), ui->sensorTwoMinValue->value())] = ChartView::LowPoint; // 低点
-        flagPosList[QPointF(ui->sensorTwoBiasAngle->value() + 0.05, ui->sensorTwoBiasValue->value())] = ChartView::Tilt; // 倾斜
-        flagPosList[QPointF(ui->sensorTwoBiasAngle->value(), ui->sensorTwoBiasValue->value())] = ChartView::Eccentric; // 偏心
-
-        for (const QPointF &point : sonData) {
-            axialPolar->scatter->append(point);
-        }
-
-        // 显式添加系列
-        axialPolar->polarChartView->chart()->addSeries(axialPolar->polarSeries);
-        axialPolar->polarChartView->chart()->addSeries(axialPolar->scatter);
-
-        axialPolar->polarChartView->setFlagPosList(flagPosList);
-        axialPolar->polarChartView->showLabels();
         axialPolar->polarChartView->update();
         axialPolar->isCreated = true;
     });
@@ -1877,11 +1756,10 @@ void Widget::readControllerObject()
         {
             myHelper::ShowMessageBoxInfo("气浮转台轴运动完成！",true,1000);
             myHelper::pushButtonStyleChange("转台启动",ui->turnTableRun,true,true);
-//            radialReadDataTimer->stop();
-//            axialReadDataTimer->stop();
-            ui->angle->setValue(360);
+            radialReadDataTimer->stop();
+            axialReadDataTimer->stop();
+
             m_mwlManager->stopContinuousRequestAllData();
-            isMeasuringStatus = false;
             QTimer::singleShot(1000,this,[this](){
                 //                radialReadDataTimer->stop();
                 //                axialReadDataTimer->stop();
@@ -1905,7 +1783,9 @@ void Widget::readControllerObject()
                 getAxialBeatAngle();
                 radialEvaluate(ui->sensorOneMaxValue->value(),ui->sensorOneMaxAngle->value(),ui->sensorOneMinValue->value(),ui->sensorOneMinAngle->value());
                 axialEvaluate(ui->sensorTwoMaxValue->value(),ui->sensorTwoMaxAngle->value(),ui->sensorTwoMinValue->value(),ui->sensorTwoMinAngle->value());
+
             });
+
         }
     }
     //轴1定位完成信号
@@ -1965,43 +1845,18 @@ void Widget::readControllerObject()
         }
     }
     //气浮转台实时角度
-    controllerObject.turnTableAngle = S7_GetRealAt(readByte,14);
-    if(S7_GetRealAt(readByte,14) != oneConObject.turnTableAngle)
+    controllerObject.turnTableAngel = S7_GetRealAt(readByte,14);
+    if(S7_GetRealAt(readByte,14) != oneConObject.turnTableAngel)
     {
-        //        oneConObject.turnTableAngel = S7_GetRealAt(readByte,14);
-        //        if(oneConObject.turnTableAngel > 359)
-        //        {
-        //            ui->angle->setValue(ceil(fmod(oneConObject.turnTableAngel,360)));
-        //        }
-        //        else
-        //        {
-        //            ui->angle->setValue(fmod(oneConObject.turnTableAngel,360));
-        //        }
-        oneConObject.turnTableAngle = S7_GetRealAt(readByte, 14);
-
-        // 使用阈值判断
-        const double threshold = 0.01;
-        double angle = fmod(oneConObject.turnTableAngle, 360.0);
-
-        if (fabs(angle - oneConObject.lastStableAngle) < threshold)
+        oneConObject.turnTableAngel = S7_GetRealAt(readByte,14);
+        if(oneConObject.turnTableAngel > 359)
         {
-            // 角度变化很小，忽略
-            angle = oneConObject.lastStableAngle;
+            ui->angle->setValue(ceil(fmod(oneConObject.turnTableAngel,360)));
         }
         else
         {
-            // 更新稳定角度
-            oneConObject.lastStableAngle = angle;
-
-            // 处理360度和0度之间的切换
-            if (angle < threshold && oneConObject.lastStableAngle > 360.0 - threshold)
-            {
-                angle = 360.0;
-            }
+            ui->angle->setValue(fmod(oneConObject.turnTableAngel,360));
         }
-
-        // 设置UI显示的角度
-        ui->angle->setValue(angle);
 
     }
     //轴存在未上使能报警
@@ -2356,6 +2211,7 @@ bool Widget::isTechnician()
         return false;
     }
 }
+
 //初始化1号马尔表实时曲线
 void Widget::initRadialChart()
 {
@@ -2369,7 +2225,7 @@ void Widget::initRadialChart()
     radialScatterSeries->setMarkerShape(QScatterSeries::MarkerShapeCircle);//圆形的点
     radialScatterSeries->setBorderColor(QColor(255, 0, 0)); //离散点边框颜色
     radialScatterSeries->setBrush(QBrush(QColor(255, 0, 0)));//离散点背景色
-    radialScatterSeries->setMarkerSize(0.01); //离散点大小
+    radialScatterSeries->setMarkerSize(2); //离散点大小
     radialScatterSeries->setUseOpenGL(true);
 
     QPen radialSeriesPen = radialSeries->pen();
@@ -2412,7 +2268,7 @@ void Widget::initAxialChart()
     axialScatterSeries->setMarkerShape(QScatterSeries::MarkerShapeCircle);//圆形的点
     axialScatterSeries->setBorderColor(QColor(255, 0, 0)); //离散点边框颜色
     axialScatterSeries->setBrush(QBrush(QColor(255, 0, 0)));//离散点背景色
-    axialScatterSeries->setMarkerSize(0.01); //离散点大小
+    axialScatterSeries->setMarkerSize(2); //离散点大小
     axialScatterSeries->setUseOpenGL(true);
 
     QPen axialSeriesPen = axialSeries->pen();
@@ -2696,7 +2552,7 @@ void Widget::addPointToRadialChart(double radialValue, double radialAngle)
 
     if(radialSeries->points().size() >= ui->Edit_smaplingPoints_3->text().toInt())
     {
-        radialReadDataTimer->stop();
+//        radialReadDataTimer->stop();
         radialYAxis->setRange(radialMinY, radialMaxY);
         return;
     }
@@ -2708,7 +2564,8 @@ void Widget::addPointToAxialChart(double axialValue, double axialAngle)
 {
     if(axialSeries->points().size() >= ui->Edit_smaplingPoints_3->text().toInt())
     {
-        axialReadDataTimer->stop();
+
+//        axialReadDataTimer->stop();
         axialYAxis->setRange(radialMinY, radialMaxY);
         return;
     }
@@ -3022,17 +2879,17 @@ bool Widget::radialPDFCreate()
     {
         return false;
     }
+    // 预览 PDF 文件
+    //    QPrinter printer(QPrinter::HighResolution);
+    //    printer.setOutputFormat(QPrinter::PdfFormat);
+    //    printer.setOutputFileName(file_path);
+
     //    QPrintPreviewDialog preview(&printer, this);
     //    connect(&preview, &QPrintPreviewDialog::paintRequested, [&](QPrinter *printer) {
     //        QPainter painter(printer);
     //        painter.drawPixmap(0, 0, QPixmap(file_path));
     //    });
-
-    //    if (preview.exec() == QDialog::Accepted) {
-    //        return true;
-    //    } else {
-    //        return false;
-    //    }
+    //    preview.exec();
 
 }
 //轴向PDF报告打印
@@ -3199,7 +3056,7 @@ void Widget::closeEvent(QCloseEvent *event)
 {
     if(isMeasuringStatus == true)
     {
-        myHelper::ShowMessageBoxInfo("正在测量中,不能关闭程序");
+        myHelper::ShowMessageBoxInfo("正在检测中,不能关闭程序");
         event->ignore();
     }
     else

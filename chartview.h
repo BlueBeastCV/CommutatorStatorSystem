@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -32,19 +32,40 @@
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QPolarChart>
+#include <QLabel>
 
 QT_CHARTS_USE_NAMESPACE
-
+uint qHash(const QPointF &key, uint seed = 0);
 class ChartView : public QChartView
 {
-public:
-    ChartView(QWidget *parent = 0);
 
-protected:
-    void keyPressEvent(QKeyEvent *event);
+	public:
+		ChartView(QWidget *parent = 0);
 
-private:
-    void switchChartType();
+		void setRectAera(QRectF rc, int width);
+		void showLabels();
+        enum PointType {
+            HighPoint,
+            LowPoint,
+            Tilt,
+            Eccentric,
+            DataDistribution
+        };
+        void setFlagPosList(const QHash<QPointF, PointType> &flagPosList);
+		//需要着重标记的点集
+//        QList<QPointF> FlagPosList;
+
+        QHash<QPointF, PointType> FlagPosList;
+
+	protected:
+		void keyPressEvent(QKeyEvent *event);
+		void resizeEvent(QResizeEvent *event) override;
+
+	private:
+
+		QGraphicsRectItem* m_Rectframe = nullptr;
+
+        QList<QGraphicsPixmapItem *> PixmapItemList; 
 };
 
 #endif

@@ -14,7 +14,10 @@
 #include <QGroupBox>
 #include <QTimer>
 #include <QThread>
-
+//扩展qDebug以文件行列记录信息
+#define qlog(msg) qDebug() << QString("[%1][threadID_%2]:%3")                                               \
+                                        .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss:zzz"))  \
+                                        .arg(QString::number(quintptr(QThread::currentThreadId()))).arg(msg);
 
 
 #define settings_version                    "1.1"
@@ -65,12 +68,12 @@ class myHelper: public QObject
 public:
 
     //显示信息框,仅确定按钮 isAutoClose = 0 不开启自动关闭
-    static void ShowMessageBoxInfo(QString info,int isAutoClose = 0)
+    static void ShowMessageBoxInfo(QString info,bool isAutoClose = false, int ms = 300)
     {
         frmMessageBox *msg = new frmMessageBox;
         msg->SetMessage(info, 0);
-        if(isAutoClose == 1){
-//			msg->startTimer();
+        if(isAutoClose == true){
+            msg->start_Timer(ms);
             msg->setModal(false);
             msg->show();
         }else{
@@ -79,12 +82,12 @@ public:
     }
 
     //显示错误框,仅确定按钮
-    static void ShowMessageBoxError(QString info,int isAutoClose = 0)
+    static void ShowMessageBoxError(QString info, bool isAutoClose = false, int ms = 3000)
     {
         frmMessageBox *msg = new frmMessageBox;
         msg->SetMessage(info, 2);
-        if(isAutoClose == 1){
-//			msg->startTimer();
+        if(isAutoClose == true){
+            msg->start_Timer(ms);
             msg->setModal(false);
             msg->show();
         }else{
@@ -94,12 +97,12 @@ public:
     }
 
     //显示询问框,确定和取消按钮 0取消
-    static int ShowMessageBoxQuesion(QString info,int isAutoClose = 0)
+    static int ShowMessageBoxQuesion(QString info, bool isAutoClose = false, int ms = 3000)
     {
         frmMessageBox *msg = new frmMessageBox;
         msg->SetMessage(info, 1);
-        if(isAutoClose == 1){
-            msg->startTimer();
+        if(isAutoClose == true){
+            msg->start_Timer(ms);
             return msg->exec();
         }else{
             return msg->exec();
@@ -120,11 +123,14 @@ public:
     {
         int frmX = frm->width();
         int frmY = frm->height();
-        QDesktopWidget w;
-        int deskWidth = w.width();
-        int deskHeight = w.height();
+
+        QDesktopWidget* desktopWidget = QApplication::desktop();
+        QRect appRect = desktopWidget->availableGeometry();//显示屏幕宽高，不包括任务栏
+        int deskWidth = appRect.width();
+        int deskHeight = appRect.height();
         QPoint movePoint(deskWidth / 2 - frmX / 2, deskHeight / 2 - frmY / 2);
         frm->move(movePoint);
+
     }
 
     //初始化ini配置文件
@@ -182,6 +188,20 @@ public:
         QSettings settings(s_name, QSettings::IniFormat);
         settings.setIniCodec(QTextCodec::codecForName("UTF-8"));
         settings.setValue(key, val);
+    }
+    //更改按钮样式函数
+    static void pushButtonStyleChange(QString content, QPushButton *btn, bool isEnable, bool isOriginalStatus)
+    {
+        if(isOriginalStatus == true){
+            btn->setStyleSheet(defaultPushButtonStyle);
+            btn->setStyleSheet(hoverPushButtonStyle);
+            btn->setStyleSheet(disablePushButtonStyle);
+        }else{
+            btn->setStyleSheet(pushButtonGreenStyle);
+        }
+        btn->setText(content);
+
+        btn->setEnabled(isEnable);
     }
 
 };

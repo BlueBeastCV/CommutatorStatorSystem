@@ -36,8 +36,8 @@ class DataOper : public QObject
         int saveSensorNumberTwoData(QVector<SensorDetectDataTwo> &sensorNumTwoDataList);
         int getTypeNumList(QStringList &typeNumList);
         int getTypeNumByTime(QStringList &typeNumList, QString startTime,QString endTime);
-        int getSensorNumberOneData(QVector<SensorDetectDataOne> &sensorNumOneDataList, const QString typeNum, const QString &startTime, const QString &endTime);
-        int getSensorNumberTwoData(QVector<SensorDetectDataTwo> &sensorNumTwoDataList, const QString typeNum, const QString &startTime, const QString &endTime);
+        int getSensorNumberOneData(QVector<SensorDetectDataOne> &sensorNumOneDataList, const QString typeNum, const QString &startTime, const QString &endTime, int queryNum);
+        int getSensorNumberTwoData(QVector<SensorDetectDataTwo> &sensorNumTwoDataList, const QString typeNum, const QString &startTime, const QString &endTime, int queryNum);
         int getAxialDataEvaluate(QVector<AxialDataEvaluate> &axialEvaluateDataList, const QString typeNum);
         int getRadialDataEvaluate(QVector<RadialDataEvaluate> &radialEvaluateDataList, const QString typeNum);
     signals:

@@ -14,10 +14,10 @@ public:
     QColor m_background;
     QColor m_foreground;
 
-    int m_maxValue;
-    int m_minValue;
-    int m_startAngle;
-    int m_endAngle;
+    double m_maxValue;
+    double m_minValue;
+    double m_startAngle;
+    double m_endAngle;
 
     int m_scaleMajor;
     int m_scaleMinor;

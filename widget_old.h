@@ -30,10 +30,6 @@
 #include <radialpolarchart.h>
 #include <axialpolarchart.h>
 #include <mwlmanager.h>
-#include <QPrintPreviewDialog>
-#include <QPrinter>
-#include <QPrintDialog>
-#include "chartview.h"
 
 typedef radialPolarChart myRadialPolarChart;
 typedef axialpolarChart myAxialPolarChart;
@@ -115,10 +111,6 @@ public:
     void initDeviceTwo();
     void initMahrDevices();
     void initMode();
-
-    //测试
-    QVector<double> generateRandomData(int count);
-
 private slots:
     void on_userTable_itemChanged(QTableWidgetItem *item);
     void updateLineEidtOne_solt(int state);
@@ -157,6 +149,8 @@ private:
     bool controllerInitStatus;
     bool loadMeasureProCodeList;
     QTimer timeReadController;
+    QTimer *sensorOneTimer;
+    QTimer *sensorTwoTimer;
     ControllerObject controllerObject;//实时PLC数据
     ControllerObject oneConObject;//只处理一次的PLC对象
     DataOper oper;
@@ -176,7 +170,6 @@ private:
     bool enabled = false;
     bool isUpping = false;
     bool isDowning = false;
-
     std::shared_ptr<qtStreamBuf> buffer;
     //初始化自定义表盘
     myDashBoard *dashboard1;
@@ -194,8 +187,8 @@ private:
     QLineSeries *axialSeries;
     qreal radialMinX = 0;
     qreal radialMaxX = 360;
-    qreal radialMinY = 0;
-    qreal radialMaxY = 1;
+    qreal radialMinY = -13;
+    qreal radialMaxY = 13;
     int radialTickCountX = 10;
     int radialTickCountY = 5;
 
@@ -231,8 +224,6 @@ private:
     double radialStepAngle;
     double axialStepAngle;
 
-    double mahrDataOne;
-    double mahrDataTwo;
     //径向剔除
     QVector<QPointF> removedRadialHigherPoints;
     QVector<QPointF> removedRadialLowerPoints;
@@ -255,11 +246,6 @@ private:
     QTimer *deviceOneGetDataTimer;
     QTimer *deviceTwoGetDataTimer;
     QTimer initTimer;
-    //测试
-    QTimer *testTimer;
-    QVector<double> xData;
-    int currentIndex;
-
 
 };
 

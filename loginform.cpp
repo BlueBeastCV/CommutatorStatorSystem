@@ -107,12 +107,10 @@ void loginForm::on_loginBtn_clicked()
     mainFm = new Widget(user);
     myHelper::FormInCenter(mainFm);
     mainFm->setAttribute(Qt::WA_DeleteOnClose);
-    int reply = myHelper::ShowMessageBoxQuesion("请确认气浮转台是否接通气源？气压是否为0.4～0.6MPa？MarComProf客户端软件是否打开？");
-    if(reply == QDialog::Accepted)
-    {
-        mainFm->show();
-        this->close();
-    }
+
+    mainFm->show();
+    this->close();
+
 }
 
 
